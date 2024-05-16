@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'NodeJS' // Pastikan nama ini sesuai dengan nama yang Anda tambahkan di Global Tool Configuration
+        nodejs 'CobaanHidup' // Pastikan nama ini sesuai dengan nama yang Anda tambahkan di Global Tool Configuration
     }
 
     environment {
@@ -19,7 +19,7 @@ pipeline {
         stage('Install dependencies') {
             steps {
                 script {
-                    def nodeHome = tool name: 'NodeJS', type: 'NodeJSInstallation'
+                    def nodeHome = tool name: 'CobaanHidup', type: 'NodeJSInstallation'
                     env.PATH = "${nodeHome}/bin:${env.PATH}"
                     sh 'npm install'
                 }
