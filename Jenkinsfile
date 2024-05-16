@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'NodeJS' // Pastikan nama ini sesuai dengan nama yang Anda tambahkan di Global Tool Configuration
+        nodejs 'ToolsNodeJS' // Pastikan nama ini sesuai dengan nama yang Anda tambahkan di Global Tool Configuration
     }
 
     environment {
@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/GalangPriyo/todolist.git' // Pastikan ini benar
+                git branch: 'master', url: 'https://github.com/GalangPriyo/todolist.git'
             }
         }
 
