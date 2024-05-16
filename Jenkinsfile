@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs "NodeJS" // Pastikan NodeJS sudah diinstal di Jenkins
+        nodejs 'NodeJS' // Pastikan nama ini sama dengan nama yang Anda tambahkan di Global Tool Configuration
     }
 
     environment {
@@ -12,13 +12,17 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/user/my-react-app.git'
+                git branch: 'main', url: 'https://github.com/GalangPriyo/todolist.git'
             }
         }
 
         stage('Install dependencies') {
             steps {
-                sh 'npm install'
+                script {
+                    def nodeHome = tool name: 'NodeJS', type: 'NodeJSInstallation'
+                    env.PATH = "${nodeHome}/bin:${env.PATH}"
+                    sh 'npm install'
+                }
             }
         }
 
