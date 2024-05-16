@@ -19,7 +19,7 @@ pipeline {
         stage('Install dependencies') {
             steps {
                 script {
-                    def nodeHome = tool name: 'NodeJS', type: 'NodeJSInstallation'
+                    def nodeHome = tool name: 'ToolsNodeJS', type: 'NodeJSInstallation'
                     env.PATH = "${nodeHome}/bin:${env.PATH}"
                     sh 'npm install'
                 }
@@ -34,7 +34,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'npm test -- --coverage'
+                sh 'npm test -- --watchAll=false'
                 junit '**/coverage/junit/*.xml'
             }
         }
