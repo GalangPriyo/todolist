@@ -1,5 +1,6 @@
+import React from "react";
 import "./App.css";
-import { TodoWrapper } from "./component/TodoWrapper";
+import { TodoWrapper } from "./component/TodoWrapper"; // Perbaiki path ke komponen yang benar
 
 function App() {
   return (

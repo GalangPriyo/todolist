@@ -1,47 +1,82 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useQuery, useMutation, gql } from "@apollo/client";
 import { TodoForm } from "./TodoForm";
-import { v4 as uuidv4 } from "uuid";
 import { Todo } from "./Todo";
-uuidv4();
+
+const GET_TODOS = gql`
+  query GetTodos {
+    todos {
+      id
+      text
+      completed
+    }
+  }
+`;
+
+const ADD_TODO = gql`
+  mutation AddTodo($text: String!) {
+    addTodo(text: $text) {
+      id
+      text
+      completed
+    }
+  }
+`;
+
+const TOGGLE_TODO_COMPLETED = gql`
+  mutation ToggleTodoCompleted($id: ID!) {
+    toggleTodoCompleted(id: $id) {
+      id
+      text
+      completed
+    }
+  }
+`;
+
+const DELETE_TODO = gql`
+  mutation DeleteTodo($id: ID!) {
+    deleteTodo(id: $id)
+  }
+`;
 
 export const TodoWrapper = () => {
-  const initialTodos = JSON.parse(window.localStorage.getItem("todos")) || [];
-  const [todos, setTodos] = useState(initialTodos);
+  const { loading, error, data } = useQuery(GET_TODOS);
+  const [addTodo] = useMutation(ADD_TODO, {
+    refetchQueries: [{ query: GET_TODOS }],
+  });
+  const [toggleTodoCompleted] = useMutation(TOGGLE_TODO_COMPLETED, {
+    refetchQueries: [{ query: GET_TODOS }],
+  });
+  const [deleteTodo] = useMutation(DELETE_TODO, {
+    refetchQueries: [{ query: GET_TODOS }],
+  });
   const [filter, setFilter] = useState("all");
 
-  useEffect(() => {
-    window.localStorage.setItem("todos", JSON.stringify(todos));
-  }, [todos]);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
-  const addTodo = (todo) => {
-    setTodos([
-      ...todos,
-      { id: uuidv4(), task: todo, completed: false, isEditing: false },
-    ]);
-    console.log(todos);
+  const handleAddTodo = (text) => {
+    addTodo({ variables: { text } });
   };
 
-  const toggleComplete = (id) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
+  const handleToggleComplete = (id) => {
+    toggleTodoCompleted({ variables: { id } });
   };
 
-  const deleteTodo = (id) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
+  const handleDeleteTodo = (id) => {
+    deleteTodo({ variables: { id } });
   };
 
-  const filteredTodos = todos.filter((todo) => {
+  const filteredTodos = data.todos.filter((todo) => {
     if (filter === "completed") return todo.completed;
     if (filter === "active") return !todo.completed;
     return true;
   });
+
   return (
     <div className="TodoWrapper">
       <h1>Catatan Kegiatan</h1>
-      <TodoForm addTodo={addTodo} />
+      <TodoForm addTodo={handleAddTodo} />
       <select
         className="Filter"
         value={filter}
@@ -51,12 +86,12 @@ export const TodoWrapper = () => {
         <option value="active">Uncompleted</option>
         <option value="completed">Completed</option>
       </select>
-      {filteredTodos.map((todo, index) => (
+      {filteredTodos.map((todo) => (
         <Todo
           task={todo}
-          key={index}
-          toggleComplete={toggleComplete}
-          deleteTodo={deleteTodo}
+          key={todo.id}
+          toggleComplete={handleToggleComplete}
+          deleteTodo={handleDeleteTodo}
         />
       ))}
     </div>

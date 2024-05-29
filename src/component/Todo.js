@@ -9,7 +9,7 @@ export const Todo = ({ task, toggleComplete, deleteTodo }) => {
         onClick={() => toggleComplete(task.id)}
         className={`${task.completed ? "completed" : ""}`}
       >
-        {task.task}
+        {task.text}
       </p>
       <div>
         <FontAwesomeIcon icon={faTrash} onClick={() => deleteTodo(task.id)} />

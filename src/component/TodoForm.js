@@ -5,12 +5,14 @@ export const TodoForm = ({ addTodo }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (value) {
-      addTodo(value);
-
-      setValue("");
+    if (!value.trim()) {
+      alert("Tugas tidak boleh kosong!");
+      return;
     }
+    addTodo(value.trim());
+    setValue("");
   };
+
   return (
     <form className="TodoForm" onSubmit={handleSubmit}>
       <input
